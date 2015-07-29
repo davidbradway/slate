@@ -1,168 +1,176 @@
 ---
-title: API Reference
-
-language_tabs:
-  - shell
-  - ruby
-  - python
+title: MATLAB Profiling
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
-
-includes:
-  - errors
+  - <a href='http://github.com/davidbradway/slate'>Documentation Powered by Slate</a>
 
 search: true
 ---
 
-# Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+# FEM repository example
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](http://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
-
-# Authentication
-
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
+Locally clone the FEM repository:
+```shell
+git clone git@github.com:Duke-Ultrasound/fem.git
+# or
+git clone https://github.com/Duke-Ultrasound/fem.git
 ```
 
-```python
-import kittn
+Add the fem subdirectories to your Matlab path.
 
-api = kittn.authorize('meowmeowmeow')
+Initialize the 'probes' submodule:
+```shell
+git submodule init
+git submodule update
+```
+
+Examine the VF10-5 test script:
+```shell
+cd fem/test/vf105 
+cat run.sh 
 ```
 
 ```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
+python ../../mesh/GenMesh.py --xyz -0.5 0.0 0.0 1.0 -3.0 0.0 --numElem 50 100 300
+python ../../mesh/bc.py
+matlab -nodesktop -nosplash -r "field2dyna('nodes.dyn',0.5,1.0,[0.0 0.0 0.02],7.2,'vf105','gaussian'); makeLoadsTemps('dyna-I-f7.20-F1.0-FD0.020-a0.50.mat','dyna-I-f7.20-F1.0-FD0.020-a0.50.mat',1000,400,4.2,0.01^3,'q',1); quit;"
+ls-dyna-d ncpu=2 i=vf105.dyn
+python ../../post/create_disp_dat.py
 ```
 
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
+Edit the 'fempath' argument with your /PATH/TO/GIT/REPO/fem/post
 ```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
+python ../../post/create_res_sim_mat.py --dynadeck vf105.dyn --fempath /getlab/dpb6/repos/fem/post
 ```
 
-> The above command returns JSON structured like this:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Isis",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
-```
-
-This endpoint retrieves all kittens.
-
-### HTTP Request
-
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
+Cut down the number of elements and generate the mesh so it runs faster for profiling (40 minutes otherwise!):
 ```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
+python ../../mesh/GenMesh.py --xyz -0.5 0.0 0.0 1.0 -3.0 0.0 --numElem 50 100 30
+ 159681/159681 nodes written to nodes.dyn
 ```
 
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Isis",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
+Generate the boundary conditions:
+```shell
+python ../../mesh/bc.py
+ 150000/150000 elements written to elems.dyn
 ```
 
-This endpoint retrieves a specific kitten.
 
-<aside class="warning">If you're not using an administrator API key, note that some kittens will return 403 Forbidden if they are hidden for admins only.</aside>
+# Baseline Profiling
 
-### HTTP Request
+We want to profile just the MATLAB part:
+```matlab
+field2dyna('nodes.dyn',0.5,1.0,[0.0 0.0 0.02],7.2,'vf105','gaussian');
+makeLoadsTemps('dyna-I-f7.20-F1.0-FD0.020-a0.50.mat','dyna-I-f7.20-F1.0-FD0.020-a0.50.mat',1000,400,4.2,0.01^3,'q',1);
+```
 
-`GET http://example.com/kittens/<ID>`
+Put these lines in a function that we can call:
+```matlab
+function [outputs] = runfield2dyna()
+    field2dyna('nodes.dyn',0.5,1.0,[0.0 0.0 0.02],7.2,'vf105','gaussian');
+    makeLoadsTemps('dyna-I-f7.20-F1.0-FD0.020-a0.50.mat','dyna-I-f7.20-F1.0-FD0.020-a0.50.mat',1000,400,4.2,0.01^3,'q',1);
+    outputs = [];
+end
+```
 
-### URL Parameters
+Open the MATLAB profiler (Run and Time). Run the code `runfield2dyna()`
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+The profiler takes about 4 min, and the largest 'self time' is for `Mat_field`.
 
+[Profiler Baseline Output](images/ProfilerBaseline.pdf)
+
+How can we speed up the `fem/field/dynaField.m` excerpt below?
+
+```matlab
+numNodes = size(FIELD_PARAMS.measurementPointsandNodes, 1);
+progressPoints = 0:10000:numNodes;
+for i=1:numNodes,
+    if ~isempty(intersect(i, progressPoints)),
+        disp(sprintf('Processed %.1f%%', i * 100 / numNodes));
+    end
+    if i == 1
+        tic;
+    end
+    % include the lens correction (axial shift)
+    [pressure, startTime] = calc_hp(Th, FIELD_PARAMS.measurementPointsandNodes(i,2:4)+FIELD_PARAMS.lens_correction_m);
+    intensity(i) = sum(pressure.*pressure);
+end
+```
+
+### Notes about this 'baseline' code:
+- runs through loop MANY times
+- has conditional expressions in loop
+- formats a string, and then prints it
+- parameter to calc_hp calculated in loop
+- startTime variable not used
+- intensity not pre-allocated, grows in loop
+
+
+# Performance Optimization
+
+### Make some changes, preferably in a git branch:
+- run through loop fewer times, with larger number of points per call to calc_hp
+- remove conditional expressions from loop
+- write a formatted string to the command line
+- precalculate parameter for calc_hp
+- startTime replaced wih `~`
+- pre-allocate intensity variable
+
+See the new version of the loop below:
+```matlab
+numNodes = size(FIELD_PARAMS.measurementPointsandNodes, 1);
+stepSize=20000;
+intensity = zeros(1,numNodes);
+
+% include the lens correction (axial shift)
+points = FIELD_PARAMS.measurementPointsandNodes(:,2:4)+FIELD_PARAMS.lens_correction_m;
+for i=1:stepSize:numNodes
+    fprintf('Processed %.1f%%\n', i * 100 / numNodes);
+
+    if i+stepSize < numNodes
+        [pressure, ~] = calc_hp(Th, points(i:i+stepSize-1,:));
+    else
+        [pressure, ~] = calc_hp(Th, points(i:numNodes,:));
+    end
+    
+    intensity(i:i+length(pressure)-1) = sum(pressure.*pressure);
+end
+```
+
+
+# Add Multi-Threading
+
+Multi-threading allows a program to access more resources of our machine. Most of the improvements in CPU throughput since the mid-2000's have come from adding cores, not increasing clock rate (GHz).
+
+Field II Pro adds support for multi-threading, but our baseline example didn't use it!
+![Baseline CPU Usage](images/CPU.png "1 thread")
+Figure 1: CPU History from our baseline run shows only 1 thread on 1 CPU core is used! Profiling took 4 minutes.
+
+We can set Field II Pro's `threads` parameter to 8 in `fem/field/field2dyna.m` 
+```matlab
+FIELD_PARAMS.threads = 8;
+```
+
+Add this above the 'for' loop in `fem/field/dynaField.m`:
+```matlab
+% Set number of threads if exists
+if isfield(FIELD_PARAMS,'threads')
+    set_field('threads',FIELD_PARAMS.threads);
+end
+```
+
+Now, run and see a big improvement!
+![8 Theaded CPU Usage](images/CPU8.png "8 threads")
+Figure 2: All 8 threads are used, and duration is under 35 seconds.
+
+[Profiler Output with 8 Threads](images/Profiler8Threads.pdf)
+
+In the PDFs notice the number of calls in the second column. 
+Decreasing the number of iterations of the `for` loop reduced the number of calls and 'self time' of all the other functions.
+
+
+# Conclusions
+- We made improvements to the main loop in the `dynaField` routine.
+- We practiced some git commands, learned about profiling, and about multi-threading.
+- If these changes are validated against other test scripts and are proven speed things up without breaking the biggest simulations, then they could be considered to be pushed and merged into the 'master' repository. In a separate branch they won't break anyone else's workflow.
