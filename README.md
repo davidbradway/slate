@@ -38,7 +38,7 @@ Getting Started with Slate
 You're going to need:
 
  - **Linux or OS X** — Windows may work, but is unsupported.
- - **Ruby, version 1.9.3 or newer**
+ - **Ruby, version 1.9.3 or newer**, `sudo apt-get install ruby`
  - **Bundler** — If Ruby is already installed, but the `bundle` command doesn't work, just run `gem install bundler` in a terminal.
 
 ### Getting Set Up
@@ -46,7 +46,16 @@ You're going to need:
  1. Fork this repository on Github.
  2. Clone *your forked repository* (not our original one) to your hard drive with `git clone https://github.com/YOURUSERNAME/slate.git`
  3. `cd slate`
- 4. Install all dependencies: `bundle install`
+ 4. Install all dependencies:
+    1. ~/cd Downloads
+    2. git clone git@github.com:davidbradway/slate.git
+    3. cd slate
+    4. sudo apt-get install ruby
+    5. sudo apt-get install ruby1.9.1-dev
+    6. sudo gem install bundler
+    7. sudo apt-get update
+    8. sudo apt-get install postgresql libpq-dev
+    9. bundle install
  5. Start the test server: `bundle exec middleman server`
 
 Or use the included Dockerfile! (must install Docker first)

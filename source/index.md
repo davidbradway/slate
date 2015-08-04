@@ -2,34 +2,42 @@
 title: MATLAB Profiling
 
 toc_footers:
-  - <a href='http://github.com/davidbradway/slate'>Documentation Powered by Slate</a>
+  - <a href='http://github.com/davidbradway/slate'>repo at Github</a>
 
 search: true
 ---
 
-
 # FEM repository example
 
-Locally clone the FEM repository:
+## Get the FEM repository
+
+> At the command line, clone the repo via ssh or https
+
 ```shell
 git clone git@github.com:Duke-Ultrasound/fem.git
-# or
 git clone https://github.com/Duke-Ultrasound/fem.git
 ```
 
-Add the fem subdirectories to your Matlab path.
+## Add fem subdirectories to MATLAB path
 
-Initialize the 'probes' submodule:
+> In MATLAB, run:
+
+```matlab
+addpath(genpath('/path/to/your/git/repo'))
+```
+
+## Initialize the 'probes' git submodule
+
+> At the command line, run:
+
 ```shell
 git submodule init
 git submodule update
 ```
 
-Examine the VF10-5 test script:
-```shell
-cd fem/test/vf105 
-cat run.sh 
-```
+## Examine the VF10-5 test script
+
+> At the command line, run: `cat fem/test/vf105/run.sh`
 
 ```shell
 python ../../mesh/GenMesh.py --xyz -0.5 0.0 0.0 1.0 -3.0 0.0 --numElem 50 100 300
@@ -39,33 +47,39 @@ ls-dyna-d ncpu=2 i=vf105.dyn
 python ../../post/create_disp_dat.py
 ```
 
-Edit the 'fempath' argument with your /PATH/TO/GIT/REPO/fem/post
+## Edit the 'fempath' argument in `run.sh`
+
 ```shell
-python ../../post/create_res_sim_mat.py --dynadeck vf105.dyn --fempath /getlab/dpb6/repos/fem/post
+python ../../post/create_res_sim_mat.py --dynadeck vf105.dyn --fempath /PATH/TO/GIT/REPO/fem/post
 ```
 
-Cut down the number of elements and generate the mesh so it runs faster for profiling (40 minutes otherwise!):
+## Reduce element #, generate the mesh
+
+Edit `run.sh` to run faster for profiling (40 minutes otherwise!)
+
 ```shell
 python ../../mesh/GenMesh.py --xyz -0.5 0.0 0.0 1.0 -3.0 0.0 --numElem 50 100 30
  159681/159681 nodes written to nodes.dyn
 ```
 
-Generate the boundary conditions:
+## Generate boundary conditions
+
 ```shell
 python ../../mesh/bc.py
  150000/150000 elements written to elems.dyn
 ```
 
-
 # Baseline Profiling
 
-We want to profile just the MATLAB part:
+## Profile the MATLAB code excerpt
+
 ```matlab
 field2dyna('nodes.dyn',0.5,1.0,[0.0 0.0 0.02],7.2,'vf105','gaussian');
 makeLoadsTemps('dyna-I-f7.20-F1.0-FD0.020-a0.50.mat','dyna-I-f7.20-F1.0-FD0.020-a0.50.mat',1000,400,4.2,0.01^3,'q',1);
 ```
 
-Put these lines in a function that we can call:
+## Insert into a MATLAB function
+
 ```matlab
 function [outputs] = runfield2dyna()
     field2dyna('nodes.dyn',0.5,1.0,[0.0 0.0 0.02],7.2,'vf105','gaussian');
@@ -74,13 +88,13 @@ function [outputs] = runfield2dyna()
 end
 ```
 
-Open the MATLAB profiler (Run and Time). Run the code `runfield2dyna()`
+## Open MATLAB Profiler
 
-The profiler takes about 4 min, and the largest 'self time' is for `Mat_field`.
+1. Run and Time the code `runfield2dyna()`
+2. The profiler takes about 4 min, and the largest 'self time' is for `Mat_field`.
+3. See detailed output stats here: [Profiler Baseline Output](images/ProfilerBaseline.pdf)
 
-[Profiler Baseline Output](images/ProfilerBaseline.pdf)
-
-How can we speed up the `fem/field/dynaField.m` excerpt below?
+### How can we speed up this `fem/field/dynaField.m` 'baseline' excerpt?
 
 ```matlab
 numNodes = size(FIELD_PARAMS.measurementPointsandNodes, 1);
@@ -98,7 +112,7 @@ for i=1:numNodes,
 end
 ```
 
-### Notes about this 'baseline' code:
+## Notes about 'baseline' code:
 - runs through loop MANY times
 - has conditional expressions in loop
 - formats a string, and then prints it
@@ -117,7 +131,8 @@ end
 - startTime replaced wih `~`
 - pre-allocate intensity variable
 
-See the new version of the loop below:
+See the new version of the loop:
+
 ```matlab
 numNodes = size(FIELD_PARAMS.measurementPointsandNodes, 1);
 stepSize=20000;
@@ -138,21 +153,24 @@ for i=1:stepSize:numNodes
 end
 ```
 
-
 # Add Multi-Threading
 
 Multi-threading allows a program to access more resources of our machine. Most of the improvements in CPU throughput since the mid-2000's have come from adding cores, not increasing clock rate (GHz).
+
+## Before
 
 Field II Pro adds support for multi-threading, but our baseline example didn't use it!
 ![Baseline CPU Usage](images/CPU.png "1 thread")
 Figure 1: CPU History from our baseline run shows only 1 thread on 1 CPU core is used! Profiling took 4 minutes.
 
-We can set Field II Pro's `threads` parameter to 8 in `fem/field/field2dyna.m` 
+> We can set Field II Pro's `threads` parameter to 8 in `fem/field/field2dyna.m` 
+
 ```matlab
 FIELD_PARAMS.threads = 8;
 ```
 
-Add this above the 'for' loop in `fem/field/dynaField.m`:
+> Add this above the 'for' loop in `fem/field/dynaField.m`:
+
 ```matlab
 % Set number of threads if exists
 if isfield(FIELD_PARAMS,'threads')
@@ -160,15 +178,15 @@ if isfield(FIELD_PARAMS,'threads')
 end
 ```
 
+## After
+
 Now, run and see a big improvement!
 ![8 Theaded CPU Usage](images/CPU8.png "8 threads")
 Figure 2: All 8 threads are used, and duration is under 35 seconds.
 
-[Profiler Output with 8 Threads](images/Profiler8Threads.pdf)
-
-In the PDFs notice the number of calls in the second column. 
-Decreasing the number of iterations of the `for` loop reduced the number of calls and 'self time' of all the other functions.
-
+1. See detailed output stats here: [Profiler Output with 8 Threads](images/Profiler8Threads.pdf)
+2. In the PDF notice the number of calls in the second column. 
+3. Decreasing the number of iterations of the `for` loop reduced the number of calls and 'self time' of all the other functions.
 
 # Conclusions
 - We made improvements to the main loop in the `dynaField` routine.
