@@ -4,18 +4,13 @@
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>API Reference</title>
+    <title>MATLAB Profiling</title>
 
     <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen" />
     <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
       <script src="javascripts/all.js" type="text/javascript"></script>
 
-      <script>
-        $(function() {
-          setupLanguages(["shell","ruby","python"]);
-        });
-      </script>
   </head>
 
   <body class="index">
@@ -27,11 +22,6 @@
     </a>
     <div class="tocify-wrapper">
       <img src="images/logo.png" />
-        <div class="lang-selector">
-              <a href="#" data-language-name="shell">shell</a>
-              <a href="#" data-language-name="ruby">ruby</a>
-              <a href="#" data-language-name="python">python</a>
-        </div>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
         </div>
@@ -39,218 +29,198 @@
       <div id="toc">
       </div>
         <ul class="toc-footer">
-            <li><a href='#'>Sign Up for a Developer Key</a></li>
-            <li><a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
+            <li><a href='http://github.com/davidbradway/slate'>repo at Github</a></li>
         </ul>
     </div>
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
-        <h1 id='introduction'>Introduction</h1>
-<p>Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.</p>
+        <h1 id="fem-repository-example">FEM repository example</h1>
 
-<p>We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
-
-<p>This example API documentation page was created with <a href="http://github.com/tripit/slate">Slate</a>. Feel free to edit it and use it as a base for your own API&rsquo;s documentation.</p>
-<h1 id='authentication'>Authentication</h1>
-<blockquote>
-<p>To authorize, use this code:</p>
-</blockquote>
-<pre><code class="highlight ruby"><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-</code></pre>
-<pre><code class="highlight python"><span class="kn">import</span> <span class="nn">kittn</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-</code></pre>
-<pre><code class="highlight shell"><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"api_endpoint_here"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre>
+<h2 id="get-the-fem-repository">Get the FEM repository</h2>
 
 <blockquote>
-<p>Make sure to replace <code class="prettyprint">meowmeowmeow</code> with your API key.</p>
+<p>At the command line, clone the repo via ssh or https</p>
 </blockquote>
-
-<p>Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our <a href="http://example.com/developers">developer portal</a>.</p>
-
-<p>Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:</p>
-
-<p><code class="prettyprint">Authorization: meowmeowmeow</code></p>
-
-<p><aside class="notice">
-You must replace <code class="prettyprint">meowmeowmeow</code> with your personal API key.
-</aside></p>
-<h1 id='kittens'>Kittens</h1><h2 id='get-all-kittens'>Get All Kittens</h2><pre><code class="highlight ruby"><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span>
+<pre class="highlight shell"><code>git clone git@github.com:Duke-Ultrasound/fem.git
+git clone https://github.com/Duke-Ultrasound/fem.git
 </code></pre>
-<pre><code class="highlight python"><span class="kn">import</span> <span class="nn">kittn</span>
 
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="o">.</span><span class="n">kittens</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<h2 id="add-fem-subdirectories-to-matlab-path">Add fem subdirectories to MATLAB path</h2>
+
+<blockquote>
+<p>In MATLAB, run:</p>
+</blockquote>
+<pre class="highlight matlab"><code><span class="nb">addpath</span><span class="p">(</span><span class="nb">genpath</span><span class="p">(</span><span class="s1">'/path/to/your/git/repo'</span><span class="p">))</span>
 </code></pre>
-<pre><code class="highlight shell">curl <span class="s2">"http://example.com/api/kittens"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
+
+<h2 id="initialize-the-39-probes-39-git-submodule">Initialize the &lsquo;probes&rsquo; git submodule</h2>
+
+<blockquote>
+<p>At the command line, run:</p>
+</blockquote>
+<pre class="highlight shell"><code>git submodule init
+git submodule update
+</code></pre>
+
+<h2 id="examine-the-vf10-5-test-script">Examine the VF10-5 test script</h2>
+
+<blockquote>
+<p>At the command line, run: <code class="prettyprint">cat fem/test/vf105/run.sh</code></p>
+</blockquote>
+<pre class="highlight shell"><code>python ../../mesh/GenMesh.py --xyz -0.5 0.0 0.0 1.0 -3.0 0.0 --numElem 50 100 300
+python ../../mesh/bc.py
+matlab -nodesktop -nosplash -r <span class="s2">"field2dyna('nodes.dyn',0.5,1.0,[0.0 0.0 0.02],7.2,'vf105','gaussian'); makeLoadsTemps('dyna-I-f7.20-F1.0-FD0.020-a0.50.mat','dyna-I-f7.20-F1.0-FD0.020-a0.50.mat',1000,400,4.2,0.01^3,'q',1); quit;"</span>
+ls-dyna-d <span class="nv">ncpu</span><span class="o">=</span>2 <span class="nv">i</span><span class="o">=</span>vf105.dyn
+python ../../post/create_disp_dat.py
+</code></pre>
+
+<h2 id="edit-the-39-fempath-39-argument-in-run-sh">Edit the &#39;fempath&rsquo; argument in <code class="prettyprint">run.sh</code></h2>
+<pre class="highlight shell"><code>python ../../post/create_res_sim_mat.py --dynadeck vf105.dyn --fempath /PATH/TO/GIT/REPO/fem/post
+</code></pre>
+
+<h2 id="reduce-element-generate-the-mesh">Reduce element #, generate the mesh</h2>
+
+<p>Edit <code class="prettyprint">run.sh</code> to run faster for profiling (40 minutes otherwise!)</p>
+<pre class="highlight shell"><code>python ../../mesh/GenMesh.py --xyz -0.5 0.0 0.0 1.0 -3.0 0.0 --numElem 50 100 30
+ 159681/159681 nodes written to nodes.dyn
+</code></pre>
+
+<h2 id="generate-boundary-conditions">Generate boundary conditions</h2>
+<pre class="highlight shell"><code>python ../../mesh/bc.py
+ 150000/150000 elements written to elems.dyn
+</code></pre>
+
+<h1 id="baseline-profiling">Baseline Profiling</h1>
+
+<h2 id="profile-the-matlab-code-excerpt">Profile the MATLAB code excerpt</h2>
+<pre class="highlight matlab"><code><span class="n">field2dyna</span><span class="p">(</span><span class="s1">'nodes.dyn'</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,[</span><span class="mf">0.0</span> <span class="mf">0.0</span> <span class="mf">0.02</span><span class="p">],</span><span class="mf">7.2</span><span class="p">,</span><span class="s1">'vf105'</span><span class="p">,</span><span class="s1">'gaussian'</span><span class="p">);</span>
+<span class="n">makeLoadsTemps</span><span class="p">(</span><span class="s1">'dyna-I-f7.20-F1.0-FD0.020-a0.50.mat'</span><span class="p">,</span><span class="s1">'dyna-I-f7.20-F1.0-FD0.020-a0.50.mat'</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,</span><span class="mf">0.01</span><span class="o">^</span><span class="mi">3</span><span class="p">,</span><span class="s1">'q'</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+</code></pre>
+
+<h2 id="insert-into-a-matlab-function">Insert into a MATLAB function</h2>
+<pre class="highlight matlab"><code><span class="k">function</span> <span class="p">[</span><span class="n">outputs</span><span class="p">]</span> <span class="o">=</span> <span class="n">runfield2dyna</span><span class="p">()</span>
+    <span class="n">field2dyna</span><span class="p">(</span><span class="s1">'nodes.dyn'</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,[</span><span class="mf">0.0</span> <span class="mf">0.0</span> <span class="mf">0.02</span><span class="p">],</span><span class="mf">7.2</span><span class="p">,</span><span class="s1">'vf105'</span><span class="p">,</span><span class="s1">'gaussian'</span><span class="p">);</span>
+    <span class="n">makeLoadsTemps</span><span class="p">(</span><span class="s1">'dyna-I-f7.20-F1.0-FD0.020-a0.50.mat'</span><span class="p">,</span><span class="s1">'dyna-I-f7.20-F1.0-FD0.020-a0.50.mat'</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,</span><span class="mf">0.01</span><span class="o">^</span><span class="mi">3</span><span class="p">,</span><span class="s1">'q'</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="k">end</span>
+</code></pre>
+
+<h2 id="open-matlab-profiler">Open MATLAB Profiler</h2>
+
+<ol>
+<li>Run and Time the code <code class="prettyprint">runfield2dyna()</code></li>
+<li>The profiler takes about 4 min, and the largest &#39;self time&rsquo; is for <code class="prettyprint">Mat_field</code>.</li>
+<li>See detailed output stats here: <a href="images/ProfilerBaseline.pdf">Profiler Baseline Output</a></li>
+</ol>
+
+<h3 id="how-can-we-speed-up-this-fem-field-dynafield-m-39-baseline-39-excerpt">How can we speed up this <code class="prettyprint">fem/field/dynaField.m</code> &#39;baseline&rsquo; excerpt?</h3>
+<pre class="highlight matlab"><code><span class="n">numNodes</span> <span class="o">=</span> <span class="nb">size</span><span class="p">(</span><span class="n">FIELD_PARAMS</span><span class="o">.</span><span class="n">measurementPointsandNodes</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">progressPoints</span> <span class="o">=</span> <span class="mi">0</span><span class="p">:</span><span class="mi">10000</span><span class="p">:</span><span class="n">numNodes</span><span class="p">;</span>
+<span class="k">for</span> <span class="nb">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">numNodes</span><span class="p">,</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="nb">intersect</span><span class="p">(</span><span class="nb">i</span><span class="p">,</span> <span class="n">progressPoints</span><span class="p">)),</span>
+        <span class="nb">disp</span><span class="p">(</span><span class="nb">sprintf</span><span class="p">(</span><span class="s1">'Processed %.1f%%'</span><span class="p">,</span> <span class="nb">i</span> <span class="o">*</span> <span class="mi">100</span> <span class="p">/</span> <span class="n">numNodes</span><span class="p">));</span>
+    <span class="k">end</span>
+    <span class="k">if</span> <span class="nb">i</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="nb">tic</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="c1">% include the lens correction (axial shift)</span>
+    <span class="p">[</span><span class="n">pressure</span><span class="p">,</span> <span class="n">startTime</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_hp</span><span class="p">(</span><span class="n">Th</span><span class="p">,</span> <span class="n">FIELD_PARAMS</span><span class="o">.</span><span class="n">measurementPointsandNodes</span><span class="p">(</span><span class="nb">i</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">)</span><span class="o">+</span><span class="n">FIELD_PARAMS</span><span class="o">.</span><span class="n">lens_correction_m</span><span class="p">);</span>
+    <span class="n">intensity</span><span class="p">(</span><span class="nb">i</span><span class="p">)</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pressure</span><span class="o">.*</span><span class="n">pressure</span><span class="p">);</span>
+<span class="k">end</span>
+</code></pre>
+
+<h2 id="notes-about-39-baseline-39-code">Notes about &#39;baseline&rsquo; code:</h2>
+
+<ul>
+<li>runs through loop MANY times</li>
+<li>has conditional expressions in loop</li>
+<li>formats a string, and then prints it</li>
+<li>parameter to calc_hp calculated in loop</li>
+<li>startTime variable not used</li>
+<li>intensity not pre-allocated, grows in loop</li>
+</ul>
+
+<h1 id="performance-optimization">Performance Optimization</h1>
+
+<h3 id="make-some-changes-preferably-in-a-git-branch">Make some changes, preferably in a git branch:</h3>
+
+<ul>
+<li>run through loop fewer times, with larger number of points per call to calc_hp</li>
+<li>remove conditional expressions from loop</li>
+<li>write a formatted string to the command line</li>
+<li>precalculate parameter for calc_hp</li>
+<li>startTime replaced wih <code class="prettyprint">~</code></li>
+<li>pre-allocate intensity variable</li>
+</ul>
+
+<p>See the new version of the loop:</p>
+<pre class="highlight matlab"><code><span class="n">numNodes</span> <span class="o">=</span> <span class="nb">size</span><span class="p">(</span><span class="n">FIELD_PARAMS</span><span class="o">.</span><span class="n">measurementPointsandNodes</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">stepSize</span><span class="o">=</span><span class="mi">20000</span><span class="p">;</span>
+<span class="n">intensity</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">numNodes</span><span class="p">);</span>
+
+<span class="c1">% include the lens correction (axial shift)</span>
+<span class="n">points</span> <span class="o">=</span> <span class="n">FIELD_PARAMS</span><span class="o">.</span><span class="n">measurementPointsandNodes</span><span class="p">(:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">)</span><span class="o">+</span><span class="n">FIELD_PARAMS</span><span class="o">.</span><span class="n">lens_correction_m</span><span class="p">;</span>
+<span class="k">for</span> <span class="nb">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">stepSize</span><span class="p">:</span><span class="n">numNodes</span>
+    <span class="nb">fprintf</span><span class="p">(</span><span class="s1">'Processed %.1f%%\n'</span><span class="p">,</span> <span class="nb">i</span> <span class="o">*</span> <span class="mi">100</span> <span class="p">/</span> <span class="n">numNodes</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="nb">i</span><span class="o">+</span><span class="n">stepSize</span> <span class="o">&lt;</span> <span class="n">numNodes</span>
+        <span class="p">[</span><span class="n">pressure</span><span class="p">,</span> <span class="o">~</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_hp</span><span class="p">(</span><span class="n">Th</span><span class="p">,</span> <span class="n">points</span><span class="p">(</span><span class="nb">i</span><span class="p">:</span><span class="nb">i</span><span class="o">+</span><span class="n">stepSize</span><span class="o">-</span><span class="mi">1</span><span class="p">,:));</span>
+    <span class="k">else</span>
+        <span class="p">[</span><span class="n">pressure</span><span class="p">,</span> <span class="o">~</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_hp</span><span class="p">(</span><span class="n">Th</span><span class="p">,</span> <span class="n">points</span><span class="p">(</span><span class="nb">i</span><span class="p">:</span><span class="n">numNodes</span><span class="p">,:));</span>
+    <span class="k">end</span>
+
+    <span class="n">intensity</span><span class="p">(</span><span class="nb">i</span><span class="p">:</span><span class="nb">i</span><span class="o">+</span><span class="nb">length</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pressure</span><span class="o">.*</span><span class="n">pressure</span><span class="p">);</span>
+<span class="k">end</span>
+</code></pre>
+
+<h1 id="add-multi-threading">Add Multi-Threading</h1>
+
+<p>Multi-threading allows a program to access more resources of our machine. Most of the improvements in CPU throughput since the mid-2000&rsquo;s have come from adding cores, not increasing clock rate (GHz).</p>
+
+<h2 id="before">Before</h2>
+
+<p>Field II Pro adds support for multi-threading, but our baseline example didn&rsquo;t use it!
+<img title="1 thread" alt="Baseline CPU Usage" src="images/CPU.png" />
+Figure 1: CPU History from our baseline run shows only 1 thread on 1 CPU core is used! Profiling took 4 minutes.</p>
+
+<blockquote>
+<p>We can set Field II Pro&rsquo;s <code class="prettyprint">threads</code> parameter to 8 in <code class="prettyprint">fem/field/field2dyna.m</code> </p>
+</blockquote>
+<pre class="highlight matlab"><code><span class="n">FIELD_PARAMS</span><span class="o">.</span><span class="n">threads</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
 </code></pre>
 
 <blockquote>
-<p>The above command returns JSON structured like this:</p>
+<p>Add this above the &#39;for&rsquo; loop in <code class="prettyprint">fem/field/dynaField.m</code>:</p>
 </blockquote>
-<pre><code class="highlight json"><span class="p">[</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Fluffums"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"calico"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Isis"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">]</span><span class="w">
-</span></code></pre>
-
-<p>This endpoint retrieves all kittens.</p>
-<h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">GET http://example.com/kittens</code></p>
-<h3 id='query-parameters'>Query Parameters</h3>
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>include_cats</td>
-<td>false</td>
-<td>If set to true, the result will also include cats.</td>
-</tr>
-<tr>
-<td>available</td>
-<td>true</td>
-<td>If set to false, the result will include kittens that have already been adopted.</td>
-</tr>
-</tbody></table>
-
-<p><aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside></p>
-<h2 id='get-a-specific-kitten'>Get a Specific Kitten</h2><pre><code class="highlight ruby"><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre>
-<pre><code class="highlight python"><span class="kn">import</span> <span class="nn">kittn</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="o">.</span><span class="n">kittens</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre>
-<pre><code class="highlight shell">curl <span class="s2">"http://example.com/api/kittens/3"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
+<pre class="highlight matlab"><code><span class="c1">% Set number of threads if exists</span>
+<span class="k">if</span> <span class="nb">isfield</span><span class="p">(</span><span class="n">FIELD_PARAMS</span><span class="p">,</span><span class="s1">'threads'</span><span class="p">)</span>
+    <span class="n">set_field</span><span class="p">(</span><span class="s1">'threads'</span><span class="p">,</span><span class="n">FIELD_PARAMS</span><span class="o">.</span><span class="n">threads</span><span class="p">);</span>
+<span class="k">end</span>
 </code></pre>
 
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<pre><code class="highlight json"><span class="p">{</span><span class="w">
-  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Isis"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
+<h2 id="after">After</h2>
 
-<p>This endpoint retrieves a specific kitten.</p>
+<p>Now, run and see a big improvement!
+<img title="8 threads" alt="8 Theaded CPU Usage" src="images/CPU8.png" />
+Figure 2: All 8 threads are used, and duration is under 35 seconds.</p>
 
-<p><aside class="warning">If you&rsquo;re not using an administrator API key, note that some kittens will return 403 Forbidden if they are hidden for admins only.</aside></p>
-<h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">GET http://example.com/kittens/&lt;ID&gt;</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>ID</td>
-<td>The ID of the cat to retrieve</td>
-</tr>
-</tbody></table>
+<ol>
+<li>See detailed output stats here: <a href="images/Profiler8Threads.pdf">Profiler Output with 8 Threads</a></li>
+<li>In the PDF notice the number of calls in the second column. </li>
+<li>Decreasing the number of iterations of the <code class="prettyprint">for</code> loop reduced the number of calls and &#39;self time&rsquo; of all the other functions.</li>
+</ol>
 
-          <h1 id='errors'>Errors</h1>
-<p><aside class="notice">This error section is stored in a separate file in <code class="prettyprint">includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files&hellip;just save them to the <code class="prettyprint">includes</code> folder and add them to the top of your <code class="prettyprint">index.md</code>&rsquo;s frontmatter. Files are included in the order listed.</aside></p>
+<h1 id="conclusions">Conclusions</h1>
 
-<p>The Kittn API uses the following error codes:</p>
-
-<table><thead>
-<tr>
-<th>Error Code</th>
-<th>Meaning</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>400</td>
-<td>Bad Request &ndash; Your request sucks</td>
-</tr>
-<tr>
-<td>401</td>
-<td>Unauthorized &ndash; Your API key is wrong</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Forbidden &ndash; The kitten requested is hidden for administrators only</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Not Found &ndash; The specified kitten could not be found</td>
-</tr>
-<tr>
-<td>405</td>
-<td>Method Not Allowed &ndash; You tried to access a kitten with an invalid method</td>
-</tr>
-<tr>
-<td>406</td>
-<td>Not Acceptable &ndash; You requested a format that isn&rsquo;t json</td>
-</tr>
-<tr>
-<td>410</td>
-<td>Gone &ndash; The kitten requested has been removed from our servers</td>
-</tr>
-<tr>
-<td>418</td>
-<td>I&rsquo;m a teapot</td>
-</tr>
-<tr>
-<td>429</td>
-<td>Too Many Requests &ndash; You&rsquo;re requesting too many kittens! Slown down!</td>
-</tr>
-<tr>
-<td>500</td>
-<td>Internal Server Error &ndash; We had a problem with our server. Try again later.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Service Unavailable &ndash; We&rsquo;re temporarially offline for maintanance. Please try again later.</td>
-</tr>
-</tbody></table>
+<ul>
+<li>We made improvements to the main loop in the <code class="prettyprint">dynaField</code> routine.</li>
+<li>We practiced some git commands, learned about profiling, and about multi-threading.</li>
+<li>If these changes are validated against other test scripts and are proven speed things up without breaking the biggest simulations, then they could be considered to be pushed and merged into the &#39;master&rsquo; repository. In a separate branch they won&rsquo;t break anyone else&rsquo;s workflow.</li>
+</ul>
 
       </div>
       <div class="dark-box">
-          <div class="lang-selector">
-                <a href="#" data-language-name="shell">shell</a>
-                <a href="#" data-language-name="ruby">ruby</a>
-                <a href="#" data-language-name="python">python</a>
-          </div>
       </div>
     </div>
   </body>
